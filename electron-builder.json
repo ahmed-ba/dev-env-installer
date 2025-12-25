@@ -1,0 +1,42 @@
+{
+    "$schema": "https://raw.githubusercontent.com/electron-userland/electron-builder/master/packages/app-builder-lib/scheme.json",
+    "appId": "com.devenv.installer",
+    "productName": "Dev Environment Installer",
+    "directories": {
+        "output": "release"
+    },
+    "files": [
+        "dist/**/*",
+        "package.json"
+    ],
+    "asarUnpack": [
+        "node_modules/node-pty/**/*"
+    ],
+    "mac": {
+        "target": [
+            {
+                "target": "dmg",
+                "arch": [
+                    "arm64"
+                ]
+            }
+        ],
+        "category": "public.app-category.developer-tools",
+        "icon": "icon.png"
+    },
+    "dmg": {
+        "title": "${productName}",
+        "contents": [
+            {
+                "x": 130,
+                "y": 220
+            },
+            {
+                "x": 410,
+                "y": 220,
+                "type": "link",
+                "path": "/Applications"
+            }
+        ]
+    }
+}
