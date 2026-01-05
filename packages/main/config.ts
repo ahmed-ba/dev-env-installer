@@ -33,11 +33,21 @@ export const MARKETPLACE_PACKAGES: AppPackage[] = [
   },
   {
     name: 'docker',
-    description: '容器化开发与运行环境',
+    description: 'Docker Desktop - 官方容器运行时',
     category: 'tool',
     installCmd: 'brew install --cask docker',
     uninstallCmd: 'brew uninstall --cask docker',
-    checkCmd: 'docker --version',
+    checkCmd: 'ls /Applications/Docker.app',
+    status: 'missing',
+    isCask: true
+  },
+  {
+    name: 'orbstack',
+    description: 'OrbStack - 轻量级 Docker 替代方案 (推荐)',
+    category: 'tool',
+    installCmd: 'brew install --cask orbstack',
+    uninstallCmd: 'brew uninstall --cask orbstack',
+    checkCmd: 'ls /Applications/OrbStack.app',
     status: 'missing',
     isCask: true
   },
