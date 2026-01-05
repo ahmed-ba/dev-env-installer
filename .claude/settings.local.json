@@ -1,0 +1,21 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(git push:*)",
+      "Bash(git remote:*)",
+      "Bash(curl:*)",
+      "Bash(git config:*)",
+      "Bash(GIT_TERMINAL_PROMPT=0 git push origin main)",
+      "Bash(gh auth status:*)",
+      "Bash(~/.git-credentials)",
+      "Bash(chmod:*)",
+      "Bash(git -c credential.helper= -c user.name=\"Gary-zy\" -c user.email=\"your-email@example.com\" push:*)",
+      "Bash(pnpm tsc:*)",
+      "Bash(pnpm build)",
+      "mcp__chrome-devtools__new_page",
+      "mcp__minimax-mcp__understand_image",
+      "WebFetch(domain:minimax-algeng-chat-tts.oss-cn-wulanchabu.aliyuncs.com)",
+      "mcp__minimax-mcp1__query_video_generation"
+    ]
+  }
+}

@@ -34,7 +34,7 @@ export class CommandStrategy implements DetectionStrategy {
     /**
      * Detect if software is installed by executing a version command
      */
-    async detect(packageName: string, config: PackageDetectionConfig): Promise<DetectionResult> {
+    async detect(_packageName: string, config: PackageDetectionConfig): Promise<DetectionResult> {
         if (!config.versionCommand) {
             return { installed: false };
         }

@@ -18,7 +18,7 @@ export class BinaryStrategy implements DetectionStrategy {
     /**
      * Detect if software is installed by checking binary paths
      */
-    async detect(packageName: string, config: PackageDetectionConfig): Promise<DetectionResult> {
+    async detect(_packageName: string, config: PackageDetectionConfig): Promise<DetectionResult> {
         const paths = config.binaryPaths || [];
 
         for (const binaryPath of paths) {

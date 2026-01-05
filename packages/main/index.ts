@@ -1,15 +1,14 @@
 import { app, BrowserWindow, ipcMain } from 'electron';
 import { join } from 'node:path';
-import { exec } from 'node:child_process';
-import { promisify } from 'node:util';
 import { MARKETPLACE_PACKAGES } from './config';
 import { BrewCommandExecutor } from './services/BrewCommandExecutor';
 import { ShellConfigManager } from './services/ShellConfigManager';
 import { SettingsService } from './services/SettingsService';
 import { HomebrewService, MirrorSource } from './services/HomebrewService';
-import { AppPackage, SystemInfo, AppSettings, BrewSearchResult } from './types';
+import { SystemInfo, AppSettings, BrewSearchResult } from './types';
 
-const execAsync = promisify(exec);
+// 全局状态映射，用于 install-all 和 uninstall-all
+const globalStatusMap: Record<string, string> = {};
 
 let mainWindow: BrowserWindow | null = null;
 
@@ -63,26 +62,31 @@ ipcMain.handle('app:check-status', async (_event, packageName?: string) => {
     ? MARKETPLACE_PACKAGES.filter(p => p.name === packageName)
     : MARKETPLACE_PACKAGES;
 
-  const results: Record<string, any> = {};
+  const results: Record<string, { status: string; version?: string }> = {};
 
   for (const pkg of list) {
     try {
       const isInstalled = await BrewCommandExecutor.checkInstalled(pkg.name, pkg.isCask);
-      const version = isInstalled ? await BrewCommandExecutor.getInstalledVersion(pkg.name, pkg.isCask) : null;
+      const version = isInstalled ? await BrewCommandExecutor.getInstalledVersion(pkg.name, pkg.isCask) ?? undefined : undefined;
+      const status = isInstalled ? 'installed' : 'missing';
 
       results[pkg.name] = {
-        status: isInstalled ? 'installed' : 'missing',
+        status,
         version
       };
+
+      // 更新全局状态映射
+      globalStatusMap[pkg.name] = status;
     } catch {
       results[pkg.name] = { status: 'missing' };
+      globalStatusMap[pkg.name] = 'missing';
     }
   }
 
   return results;
 });
 
-ipcMain.handle('app:install', async (event, packageName: string) => {
+ipcMain.handle('app:install', async (_event, packageName: string) => {
   const pkg = MARKETPLACE_PACKAGES.find(p => p.name === packageName);
   if (!pkg || !mainWindow) return false;
 
@@ -116,7 +120,7 @@ ipcMain.handle('system:inject-env', async (_event, path: string) => {
   }
 });
 
-ipcMain.handle('app:uninstall', async (event, packageName: string) => {
+ipcMain.handle('app:uninstall', async (_event, packageName: string) => {
   const pkg = MARKETPLACE_PACKAGES.find(p => p.name === packageName);
   if (!pkg || !mainWindow) return false;
 
@@ -159,7 +163,7 @@ ipcMain.handle('app:cancel-install', async (_event, packageName: string) => {
   return success;
 });
 
-ipcMain.handle('app:search', async (event, keyword: string, isCask: boolean = false) => {
+ipcMain.handle('app:search', async (_event, keyword: string, isCask: boolean = false) => {
   if (!mainWindow) return [];
 
   const packages = await BrewCommandExecutor.searchPackages(keyword, isCask);
@@ -199,31 +203,67 @@ ipcMain.handle('app:get-package-info', async (_event, packageName: string, isCas
   };
 });
 
-ipcMain.handle('app:install-all', async (event) => {
+ipcMain.handle('app:install-all', async (_event) => {
   if (!mainWindow) return false;
 
+  // 获取所有未安装的软件包
   const uninstalled = MARKETPLACE_PACKAGES.filter(p => {
-    const status = (event.sender as any).statusMap?.[p.name];
+    const status = globalStatusMap[p.name];
     return status === 'missing';
   });
 
+  // 直接调用安装方法，而不是使用 ipcMain.emit
   for (const pkg of uninstalled) {
-    await ipcMain.emit('app:install', event, pkg.name);
+    const pkgInfo = MARKETPLACE_PACKAGES.find(item => item.name === pkg.name);
+    if (!pkgInfo) continue;
+
+    mainWindow.webContents.send('status:updated', {
+      id: pkg.name,
+      status: 'processing'
+    });
+
+    await BrewCommandExecutor.install(
+      mainWindow,
+      pkgInfo.name,
+      pkgInfo.isCask || false,
+      pkg.name
+    );
+
+    // 使缓存失效
+    BrewCommandExecutor.invalidateCache(pkg.name);
   }
 
   return true;
 });
 
-ipcMain.handle('app:uninstall-all', async (event) => {
+ipcMain.handle('app:uninstall-all', async (_event) => {
   if (!mainWindow) return false;
 
+  // 获取所有已安装的软件包
   const installed = MARKETPLACE_PACKAGES.filter(p => {
-    const status = (event.sender as any).statusMap?.[p.name];
+    const status = globalStatusMap[p.name];
     return status === 'installed';
   });
 
+  // 直接调用卸载方法，而不是使用 ipcMain.emit
   for (const pkg of installed) {
-    await ipcMain.emit('app:uninstall', event, pkg.name);
+    const pkgInfo = MARKETPLACE_PACKAGES.find(item => item.name === pkg.name);
+    if (!pkgInfo) continue;
+
+    mainWindow.webContents.send('status:updated', {
+      id: pkg.name,
+      status: 'uninstalling'
+    });
+
+    await BrewCommandExecutor.uninstall(
+      mainWindow,
+      pkgInfo.name,
+      pkgInfo.isCask || false,
+      pkg.name
+    );
+
+    // 使缓存失效
+    BrewCommandExecutor.invalidateCache(pkg.name);
   }
 
   return true;

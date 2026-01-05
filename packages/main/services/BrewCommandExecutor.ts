@@ -46,7 +46,11 @@ export interface ErrorInfo {
 }
 
 export class BrewCommandExecutor {
-  private static readonly BREW_PATHS = ['/opt/homebrew/bin/brew', '/usr/local/bin/brew'];
+  private static readonly BREW_PATHS = [
+    '/opt/homebrew/bin/brew',    // Apple Silicon (M1/M2/M3)
+    '/usr/local/bin/brew',        // Intel Mac 或 Rosetta 2
+    '/usr/local/Homebrew/bin/brew' // 旧版 Homebrew 安装路径
+  ];
   
   // 追踪正在运行的进程，用于取消操作
   private static runningProcesses: Map<string, ChildProcess> = new Map();
@@ -406,7 +410,7 @@ export class BrewCommandExecutor {
     }, packageId);
   }
 
-  static async checkInstalled(packageName: string, isCask: boolean = false): Promise<boolean> {
+  static async checkInstalled(packageName: string, _isCask: boolean = false): Promise<boolean> {
     try {
       // Use the new multi-strategy detector
       const result = await detector.detect(packageName);

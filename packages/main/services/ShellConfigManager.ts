@@ -61,10 +61,18 @@ export class ShellConfigManager {
   static pathExistsInConfig(path: string): boolean {
     const content = this.getConfigContent();
     const normalizedPath = path.replace(/\/$/, '');
-    return content.includes(`export PATH="${normalizedPath}:$PATH"`) ||
-           content.includes(`export PATH="$PATH:${normalizedPath}"`) ||
-           content.includes(`:${normalizedPath}:`) ||
-           content.includes(`:${normalizedPath}"`);
+    const escapedPath = normalizedPath.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+
+    // 使用更精确的正则表达式匹配
+    const patterns = [
+      new RegExp(`export PATH="${escapedPath}:\\$PATH"`),
+      new RegExp(`export PATH="\\$PATH:${escapedPath}"`),
+      new RegExp(`:${escapedPath}:"`),
+      new RegExp(`\\s${escapedPath}:`),
+      new RegExp(`:${escapedPath}\\s`)
+    ];
+
+    return patterns.some(pattern => pattern.test(content));
   }
 
   static addPathToConfig(path: string): { success: boolean; message: string } {
@@ -93,7 +101,7 @@ export class ShellConfigManager {
 
   static removePathFromConfig(path: string): { success: boolean; message: string } {
     const configPath = this.getConfigPath();
-    
+
     if (!existsSync(configPath)) {
       return { success: true, message: 'Config file does not exist' };
     }
@@ -101,21 +109,34 @@ export class ShellConfigManager {
     try {
       let content = readFileSync(configPath, 'utf-8');
       const lines = content.split('\n');
+      const normalizedPath = path.replace(/\/$/, '');
+      const escapedPath = normalizedPath.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+
+      // 使用更精确的正则表达式匹配要删除的行
+      const pathPatterns = [
+        new RegExp(`export PATH="${escapedPath}:\\$PATH"`),
+        new RegExp(`export PATH="\\$PATH:${escapedPath}"`)
+      ];
+
       const filteredLines = lines.filter(line => {
         const trimmed = line.trim();
+
+        // 移除由本程序添加的注释行
         if (trimmed.startsWith('# Added by Dev Env Installer')) return false;
-        if (trimmed.includes(`export PATH="${path}:$PATH"`)) return false;
-        if (trimmed.includes(`export PATH="$PATH:${path}"`)) return false;
-        if (trimmed.includes(`:${path}:`) || trimmed.includes(`:${path}"`)) return false;
+
+        // 检查是否是本程序添加的路径行
+        const isPathLine = pathPatterns.some(pattern => pattern.test(line));
+        if (isPathLine) return false;
+
         return true;
       });
-      
+
       writeFileSync(configPath, filteredLines.join('\n'), 'utf-8');
       return { success: true, message: `Successfully removed ${path} from ${configPath}` };
     } catch (error) {
-      return { 
-        success: false, 
-        message: `Failed to remove path: ${error instanceof Error ? error.message : 'Unknown error'}` 
+      return {
+        success: false,
+        message: `Failed to remove path: ${error instanceof Error ? error.message : 'Unknown error'}`
       };
     }
   }

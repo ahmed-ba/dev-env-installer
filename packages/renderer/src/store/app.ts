@@ -58,7 +58,7 @@ function saveToCache(statuses: Record<string, string>, versions: Record<string, 
 }
 
 // 强制深色模式
-function forceeDarkMode(): void {
+function forceDarkMode(): void {
   document.documentElement.classList.remove('light');
   document.documentElement.classList.add('dark');
 }
@@ -107,7 +107,7 @@ export const useAppStore = defineStore('app', {
     async checkBrewStatus() {
       this.isBrewChecking = true;
       try {
-        const result: BrewCheckResult = await (window as any).electronAPI.brew.checkInstalled();
+        const result = await window.electronAPI.brew.checkInstalled();
         this.isBrewInstalled = result.installed;
       } catch (error) {
         console.error('Failed to check Homebrew status:', error);
@@ -120,7 +120,7 @@ export const useAppStore = defineStore('app', {
     async startBrewInstall(source: MirrorSource) {
       this.isBrewInstalling = true;
       this.brewInstallError = null;
-      await (window as any).electronAPI.brew.install(source);
+      await window.electronAPI.brew.install(source);
     },
 
     handleBrewInstallComplete(result: BrewInstallResult) {
@@ -147,11 +147,11 @@ export const useAppStore = defineStore('app', {
           return;
         }
 
-        this.marketplace = await (window as any).electronAPI.getMarketplace();
-        this.settings = await (window as any).electronAPI.settings.get();
+        this.marketplace = await window.electronAPI.getMarketplace() as unknown as AppPackage[];
+        this.settings = await window.electronAPI.settings.get() as unknown as AppSettings;
 
         // 强制深色模式
-        forceeDarkMode();
+        forceDarkMode();
 
         // 先从缓存加载，实现“秒开”
         const cache = loadFromCache();
@@ -174,11 +174,11 @@ export const useAppStore = defineStore('app', {
           await this.refreshStatuses({ force: true, silent: !cache });
         }
 
-        (window as any).electronAPI.onStatusUpdated((data: any) => {
+        window.electronAPI.onStatusUpdated((data) => {
           this.statuses[data.id] = data.status;
         });
 
-        (window as any).electronAPI.onInstallationProgress((data: any) => {
+        window.electronAPI.onInstallationProgress((data) => {
           // 保存进度状态
           this.installProgress[data.id] = {
             status: data.status,
@@ -217,7 +217,7 @@ export const useAppStore = defineStore('app', {
         });
 
         // 监听错误事件
-        (window as any).electronAPI.onInstallationError((data: any) => {
+        window.electronAPI.onInstallationError((data) => {
           this.errors[data.id] = {
             type: data.type,
             message: data.message,
@@ -225,7 +225,7 @@ export const useAppStore = defineStore('app', {
           };
         });
 
-        (window as any).electronAPI.onCommandCompleted((data: any) => {
+        window.electronAPI.onCommandCompleted((data) => {
           if (data.success) {
             this.statuses[data.id] = 'installed';
           } else {
@@ -241,7 +241,7 @@ export const useAppStore = defineStore('app', {
     },
 
     async refreshSystemInfo() {
-      this.systemInfo = await (window as any).electronAPI.getSystemInfo();
+      this.systemInfo = await window.electronAPI.getSystemInfo() as SystemInfo;
     },
 
     async refreshStatuses(options?: { force?: boolean; silent?: boolean }) {
@@ -255,9 +255,9 @@ export const useAppStore = defineStore('app', {
       }
       
       try {
-        const results = await (window as any).electronAPI.checkStatus();
+        const results = await window.electronAPI.checkStatus() as Record<string, { status: string; version?: string }>;
         Object.keys(results).forEach(key => {
-          this.statuses[key] = results[key].status;
+          this.statuses[key] = results[key].status as PackageStatus;
           if (results[key].version) {
             this.versions[key] = results[key].version;
           }
@@ -279,7 +279,7 @@ export const useAppStore = defineStore('app', {
         progress: undefined,
         message: '准备安装...'
       };
-      await (window as any).electronAPI.installPackage(name);
+      await window.electronAPI.installPackage(name);
     },
 
     async uninstallPackage(name: string) {
@@ -290,7 +290,7 @@ export const useAppStore = defineStore('app', {
         progress: 0,
         message: '准备卸载...'
       };
-      await (window as any).electronAPI.uninstallPackage(name);
+      await window.electronAPI.uninstallPackage(name);
     },
 
     async searchPackages(keyword: string, isCask: boolean = false) {
@@ -301,7 +301,7 @@ export const useAppStore = defineStore('app', {
 
       this.isSearching = true;
       try {
-        this.searchResults = await (window as any).electronAPI.searchPackages(keyword, isCask);
+        this.searchResults = await window.electronAPI.searchPackages(keyword, isCask);
       } catch (error) {
         this.searchResults = [];
       } finally {
@@ -335,27 +335,27 @@ export const useAppStore = defineStore('app', {
     async configureShell(type: 'all' | 'homebrew' | 'node' | 'go' | 'python') {
       switch (type) {
         case 'all':
-          return await (window as any).electronAPI.shell.configureAll();
+          return await window.electronAPI.shell.configureAll();
         case 'homebrew':
-          return await (window as any).electronAPI.shell.configureHomebrew();
+          return await window.electronAPI.shell.configureHomebrew();
         case 'node':
-          return await (window as any).electronAPI.shell.configureNode();
+          return await window.electronAPI.shell.configureNode();
         case 'go':
-          return await (window as any).electronAPI.shell.configureGo();
+          return await window.electronAPI.shell.configureGo();
         case 'python':
-          return await (window as any).electronAPI.shell.configurePython();
+          return await window.electronAPI.shell.configurePython();
       }
     },
 
     async updateSettings(settings: Partial<AppSettings>) {
-      await (window as any).electronAPI.settings.set(settings);
+      await window.electronAPI.settings.set(settings);
       this.settings = { ...this.settings, ...settings } as AppSettings;
       // 主题切换已移除，强制深色模式
     },
 
     // 取消安装/卸载
     async cancelInstall(name: string) {
-      const success = await (window as any).electronAPI.cancelInstall(name);
+      const success = await window.electronAPI.cancelInstall(name);
       if (success) {
         this.statuses[name] = 'missing';
         delete this.installProgress[name];

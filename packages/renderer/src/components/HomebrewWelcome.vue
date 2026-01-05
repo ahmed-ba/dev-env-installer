@@ -143,6 +143,7 @@ import { FitAddon } from 'xterm-addon-fit';
 import { WebLinksAddon } from 'xterm-addon-web-links';
 import 'xterm/css/xterm.css';
 import { useAppStore, MirrorSource } from '../store/app';
+import type { BrewInstallResult } from '../types/electronAPI';
 
 const store = useAppStore();
 
@@ -211,7 +212,7 @@ function initTerminal() {
 
   // Handle user input
   terminal.onData((data) => {
-    (window as any).electronAPI.brew.sendInput(data);
+    window.electronAPI.brew.sendInput(data);
   });
 
   // Handle window resize
@@ -223,7 +224,7 @@ function handleResize() {
     fitAddon.fit();
     const dims = fitAddon.proposeDimensions();
     if (dims) {
-      (window as any).electronAPI.brew.resize(dims.cols, dims.rows);
+      window.electronAPI.brew.resize(dims.cols, dims.rows);
     }
   }
 }
@@ -234,7 +235,7 @@ function handleInstallData(data: string) {
   }
 }
 
-function handleInstallComplete(result: any) {
+function handleInstallComplete(result: BrewInstallResult) {
   if (result.success && result.installed) {
     installSuccess.value = true;
     if (terminal) {
@@ -258,14 +259,14 @@ function handleInstallComplete(result: any) {
 
 onMounted(() => {
   // Register IPC listeners
-  (window as any).electronAPI.brew.onInstallData(handleInstallData);
-  (window as any).electronAPI.brew.onInstallComplete(handleInstallComplete);
+  window.electronAPI.brew.onInstallData(handleInstallData);
+  window.electronAPI.brew.onInstallComplete(handleInstallComplete);
 });
 
 onBeforeUnmount(() => {
   // Cleanup
   window.removeEventListener('resize', handleResize);
-  (window as any).electronAPI.brew.removeListeners();
+  window.electronAPI.brew.removeListeners();
   
   if (terminal) {
     terminal.dispose();

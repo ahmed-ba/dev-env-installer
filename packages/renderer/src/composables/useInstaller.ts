@@ -1,19 +1,19 @@
 import { ref, onMounted, onBeforeUnmount, computed } from 'vue';
+import type { InstallationProgress as ApiInstallationProgress, InstallationLog } from '../types/electronAPI';
 
-export type InstallationStatus = 'idle' | 'downloading' | 'installing' | 'completed' | 'failed';
+export type InstallationStatus = 'idle' | 'downloading' | 'installing' | 'completed' | 'failed' | 'cancelled';
 
+// 本地 LogEntry 类型，增加了 time 和 isError 属性用于显示
 export interface LogEntry {
+  id: string;
   text: string;
+  type: 'stdout' | 'stderr';
+  timestamp: number;
   time: string;
   isError?: boolean;
 }
 
-export interface InstallationProgress {
-  id: string;
-  status: InstallationStatus;
-  progress?: number;
-  message?: string;
-}
+export interface InstallationProgress extends ApiInstallationProgress {}
 
 export interface SoftwareInfo {
   id: string;
@@ -30,19 +30,26 @@ export function useInstaller() {
   const showEnvInjectDialog = ref(false);
   const lastInstallSuccess = ref(false);
 
-  const handleTerminalData = (data: any) => {
-    const time = new Date(data.timestamp || Date.now()).toLocaleTimeString();
-    logs.value.push({
+  // 保存监听器引用，以便正确移除
+  let terminalDataHandler: ((data: InstallationLog) => void) | null = null;
+  let progressHandler: ((data: InstallationProgress) => void) | null = null;
+
+  const handleTerminalData = (data: InstallationLog) => {
+    const entry: LogEntry = {
+      id: data.id,
       text: data.text,
-      time,
+      type: data.type,
+      timestamp: data.timestamp,
+      time: new Date(data.timestamp).toLocaleTimeString(),
       isError: data.type === 'stderr'
-    });
+    };
+    logs.value.push(entry);
   };
 
   const handleProgress = (data: InstallationProgress) => {
     progress.value = data;
-    isRunning.value = data.status !== 'completed' && data.status !== 'failed';
-    
+    isRunning.value = data.status !== 'completed' && data.status !== 'failed' && data.status !== 'cancelled';
+
     if (data.status === 'completed') {
       lastInstallSuccess.value = true;
       if (currentSoftware.value?.envPath) {
@@ -117,12 +124,19 @@ export function useInstaller() {
   });
 
   onMounted(() => {
-    window.electronAPI.onTerminalData(handleTerminalData);
-    window.electronAPI.onInstallationProgress(handleProgress);
+    // 保存处理函数引用
+    terminalDataHandler = handleTerminalData;
+    progressHandler = handleProgress;
+
+    window.electronAPI.onTerminalData(terminalDataHandler);
+    window.electronAPI.onInstallationProgress(progressHandler);
   });
 
   onBeforeUnmount(() => {
-    window.electronAPI.removeListeners();
+    // 只移除当前组件添加的监听器，而不是所有监听器
+    if (terminalDataHandler) {
+      window.electronAPI.removeListeners();
+    }
   });
 
   return {
