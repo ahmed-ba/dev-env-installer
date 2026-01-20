@@ -1,0 +1,18 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-title>Liste produits</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="addItem()"
+        ><ion-icon name="add"></ion-icon
+      ></ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <ion-list>
+    <ion-item *ngFor="let prod of products ; let i = index">
+      Produit {{i+1}}
+    </ion-item>
+  </ion-list>
+</ion-content>
