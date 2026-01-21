@@ -1,0 +1,30 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>Ajouter un produit</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="close()"
+        ><ion-icon name="close"></ion-icon
+      ></ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <ion-list>
+    <ion-item>
+      <ion-label>Titre</ion-label>
+      <ion-input type="text" [(ngModel)]="titre"></ion-input>
+    </ion-item>
+    <ion-item>
+      <ion-label>Description</ion-label>
+      <ion-input type="text" [(ngModel)]="description"></ion-input>
+    </ion-item>
+    <ion-item>
+      <ion-label>Prix</ion-label>
+      <ion-input type="text" [(ngModel)]="prix"></ion-input>
+    </ion-item>
+  </ion-list>
+  <ion-button expand="block" color="success" (click)="saveItem()"
+    >Save</ion-button
+  >
+</ion-content>
